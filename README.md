@@ -2,7 +2,7 @@
 
 a photo management system that works with Azure Blob Storage. 
 
-documentation is [available here]()
+documentation is [available here](https://jay-study-nildana.github.io/PhoBlober/)
 
 # book a session with me
 
