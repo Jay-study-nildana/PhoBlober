@@ -1,8 +1,14 @@
-# PhoBlober 
+# PhoBlober
 
-a photo management system that works with Azure Blob Storage. 
+[<img src="pbimg1.png">]()
 
-documentation is [available here]()
+a photo management system that works with Azure Blob Storage.
+
+NOTE: Don't forget to delete your Azure Resources after you are done running the project.
+
+# more explanations
+
+1. [howtorun.md](howtorun.md)
 
 # book a session with me
 

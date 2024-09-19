@@ -1,0 +1,86 @@
+﻿@using AzureBlogWebAppDemo.DTO
+@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+
+@model GetAllBlobsDTO 
+
+<div id="carouselExample" class="carousel slide" style="width:50%;  margin-left:auto; margin-right:auto">
+	<h3 style="text-align: center;">
+		Simple Carousel Display
+	</h3>
+	<div class="carousel-inner">
+		@foreach (var item in Model.BlobFullURL)
+		{
+
+			<div class="carousel-item @(item == Model.BlobFullURL.First() ? "active" : "")">
+				<img src=@item class="img-fluid d-block w-100" alt="...">
+			</div>
+		}
+	</div>
+	<button class="carousel-control-prev" type="button" data-bs-target="#carouselExample" data-bs-slide="prev">
+		<span class="carousel-control-prev-icon" aria-hidden="true"></span>
+		<span class="visually-hidden">Previous</span>
+	</button>
+	<button class="carousel-control-next" type="button" data-bs-target="#carouselExample" data-bs-slide="next">
+		<span class="carousel-control-next-icon" aria-hidden="true"></span>
+		<span class="visually-hidden">Next</span>
+	</button>
+</div>
+<hr />
+<div style="  margin-left:auto; margin-right:auto">
+	<h3>List of All Images</h3>
+	@{
+		int maximagesdisplay = 5;
+		int imagedisplaycounter = 0;
+	}
+	@foreach (var item in Model.BlobFullURL)
+	{
+		if (imagedisplaycounter < maximagesdisplay)
+		{
+			<img src=@item class="img-fluid" alt="" style="align-items: center;margin-left:auto;margin-right:auto;display: grid;">
+		}
+		imagedisplaycounter++;
+
+	}
+	@{
+		<p>Showing only @maximagesdisplay images. </p>
+	}
+</div>
+
+@* just a whole bunch of ways to show images *@
+
+@* <div class="card shadow border-0 mt-4">
+	<div class="card-header bg-secondary bg-gradient ml-0 py-3">
+		<div class="row">
+			<div class="col-12 text-center">
+				<h1 class="text-white">List of Images</h1>
+			</div>
+		</div>
+	</div>
+	<div class="card-body p-4">
+		<div class="row pb-3">
+			<div class="col-12 text-end">
+				<button><a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="PhotoUpload">Upload another photo</a></button>
+
+			</div>
+			<div>
+				@foreach (var item in Model.BlobFullURL)
+				{
+					<img src=@item class="img-fluid" alt="" style="width:50%;  margin-left:auto; margin-right:auto">
+				}
+			</div>
+		</div>
+		<div>
+			@foreach (var item in Model.BlobFullURL)
+			{
+				<img src=@item class="img-fluid" alt="" style="width:50%;  margin-left:auto; margin-right:auto">
+			}
+		</div>
+
+	</div>
+
+
+</div> *@

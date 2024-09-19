@@ -1,0 +1,81 @@
+﻿@using AzureBlogWebAppDemo.DTO
+@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+
+@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+
+@model PhotoUploadDTO 
+
+<form asp-action="PhotoUpload" enctype="multipart/form-data">
+    <br />
+    <div class="container border p-3">
+        <h1 class="text-white text-center">Photo Upload</h1>
+
+        <hr />
+        <div class="row">
+            <div class="col-2">
+                <label class="control-label pt-2" style="font-size:20px;"> Photo Description (Optional) </label>
+            </div>
+            <div class="col-10 pb-3">
+                <input asp-for="PhotoDescription" class="form-control" />
+                @* <span asp-validation-for="PhotoDescription" class="text-danger"></span> *@
+            </div>
+            <div class="col-2">
+                <label class="control-label pt-2" style="font-size:20px;">Photo Name (Optional)</label>
+            </div>
+            <div class="col-10 pb-3">
+                <input asp-for="PhotoName" class="form-control" />
+                @* <span asp-validation-for="PhotoName" class="text-danger"></span> *@
+            </div>
+            <div class="col-2">
+                <label class="control-label pt-2" style="font-size:20px;">container Name (Optional)</label>
+            </div>
+            <div class="col-10 pb-3">
+@*                 for some reason, the input validation becomes 'required', even though, the DTO 
+                no longer has the 'required'attribute
+                so instead of razor code, I have written HTML directly to stop the automatic
+                required tag from getting loaded. 
+                here, I want to make entering the container optional.  *@
+                @* <textarea asp-for="containerName" class="form-control" rows="5"></textarea> *@
+                @* <input asp-for="containerName" class="form-control" /> *@
+                @* <span asp-validation-for="containerName" class="text-danger"></span> *@
+                @* <input class="form-control" type="text" data-val="true" data-val-required="The containerName field is required." id="containerName" name="containerName" value=""> *@
+
+                <input class="form-control" type="text"  id="containerName" name="containerName" value="">
+            </div>
+            <div class="col-2">
+                <label class="control-label pt-2" style="font-size:20px;">ImageUrl</label>
+            </div>
+            <div class="col-10 pb-3">
+                @* I don't have image upload functionality as of now' *@
+                <input asp-for="Image" class="form-control" />
+                <span asp-validation-for="Image" class="text-danger"></span>
+            </div>
+
+            <div class="col-5 offset-2">
+
+                <a asp-action="Index" class="btn-primary btn form-control ">Back to Home</a>
+            </div>
+            <div class="col-5">
+                <input type="submit" value="Upload Image" class="btn btn-success form-control" />
+
+            </div>
+
+        </div>
+
+        <div>
+        </div>
+    </div>
+</form>
+
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
