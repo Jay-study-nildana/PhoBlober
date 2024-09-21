@@ -11,7 +11,7 @@ namespace AzureBlogWebAppDemo.Services
 
 		public string GiveMeDefaultContainerName()
 		{
-			string DefaultContainerName = "";
+			string DefaultContainerName = "containeroneb291fa31-8fe4-4e05-a184-382cc7b4aa18";
 			return DefaultContainerName;
 		}
 	}

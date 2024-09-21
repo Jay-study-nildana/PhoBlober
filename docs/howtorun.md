@@ -6,14 +6,16 @@ NOTE: Don't forget to delete your Azure Resources after you are done running the
 
 1. You have to create a Storage Account on Azure.
 1. You want to turn on 'AllowBlobPublicAccess', for the Storage Account
+   [<img src="allowblobanonymousaccess1.png">]()
 1. AzureBlobWebAPIDemo
    1. Update 'AccessKeys'in the class, 'BlobStorageStuff'
-   1. Update, 'DefaultContainerName', in the class, 'BlobStorageStuff'.
-1. AzureBlogWebAppDemo
-   1. Update, 'DefaultContainerName', in the class, 'BlobStorageStuff'. The web app will pull images from this container.
-1. Other Things
-   1. Set the Container to public using AzureBlobWebAPIDemo Swagger UI or Azure Portal
+1. Run both the projects and do the following Container Actions
    1. Create a Container on Azure Portal or using Swagger UI
+   1. Set the Container to public using AzureBlobWebAPIDemo Swagger UI or Azure Portal
+   1. Now, stop running the project, and go to the next step.
+   1. Update, 'DefaultContainerName', in the class, 'BlobStorageStuff' (AzureBlobWebAPIDemo project), with the container you just created and made public.
+   1. Update, 'DefaultContainerName', in the class, 'BlobStorageStuff'. The web app will pull images from this container (AzureBlogWebAppDemo project), with the container you just created and made public.
+1. and that's it.
 
 # book a session with me
 

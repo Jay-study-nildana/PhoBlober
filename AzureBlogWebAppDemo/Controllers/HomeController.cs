@@ -92,8 +92,16 @@ namespace AzureBlogWebAppDemo.Controllers
 
             if (response != null && response.IsSuccess)
             {
-                getAllBlobsDTO = JsonConvert.DeserializeObject<GetAllBlobsDTO>(Convert.ToString(response.Result));
-
+                //if there are no images to show, just go to home page.
+                if(response.Result == null)
+                {
+                    TempData["error"] = "no images in the container";
+                    return RedirectToAction(nameof(Index));
+                }
+                else
+                {
+                    getAllBlobsDTO = JsonConvert.DeserializeObject<GetAllBlobsDTO>(Convert.ToString(response.Result));
+                }
             }
             else
             {
