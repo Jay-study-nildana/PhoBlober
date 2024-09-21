@@ -42,12 +42,17 @@ namespace AzureBlogWebAppDemo.Controllers
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
 
-        public async Task<IActionResult> PhotoUpload()
+        public IActionResult PhotoUpload()
         {
             return View();
         }
 
-        public async Task<IActionResult> PhotoUploadSuccessfull()
+        public IActionResult PhotoUploadMultiple()
+        {
+            return View();
+        }
+
+        public IActionResult PhotoUploadSuccessfull()
         {
             return View();
         }
@@ -82,12 +87,54 @@ namespace AzureBlogWebAppDemo.Controllers
             return View(model);
         }
 
+        [HttpPost]
+        public async Task<IActionResult> PhotoUploadMultiple(PhotoUploadMultipleDTO model)
+        {
+            if (model.containerName == null)
+                model.containerName = "";
+
+            //the backend already has an option to add a default container
+            //but you can use this too if you want, but I don't recommend this.
+
+            //if(model?.containerName.Length==0)
+            //{
+            //    string containerName = "containersept172024onef24502ee-d160-435d-ae07-19f9c8a5dc96"; //as of now, hardcoding it. we will need to get his elsewhere, from DB, later.
+            //    model.containerName = containerName;
+            //}
+
+            ResponseDto? response = new ResponseDto();
+
+            foreach (var file in model.Image)
+            {
+                var tempPhotoUploadDTO = new PhotoUploadDTO();
+                tempPhotoUploadDTO.Image = file;
+                response = await _photoService.UploadPhotoAsync(tempPhotoUploadDTO);
+            }
+
+            //ResponseDto? response = new ResponseDto();
+            //response.IsSuccess = true;
+
+
+            if (response != null && response.IsSuccess)
+            {
+                TempData["success"] = "Photo Uploaded successfully";
+                return RedirectToAction(nameof(PhotoUploadSuccessfull));
+            }
+            else
+            {
+                TempData["error"] = response?.Message;
+            }
+            return View(model);
+        }
+
         public async Task<IActionResult> PhotoDisplay()
         {
             GetAllBlobsDTO getAllBlobsDTO = new GetAllBlobsDTO();
             var defaultContainer = _blobStorageStuff.GiveMeDefaultContainerName();
             string containerName = defaultContainer;
             ResponseDto? response = await _photoService.GetPhotosAsync(containerName);
+
+
 
 
             if (response != null && response.IsSuccess)
@@ -102,6 +149,12 @@ namespace AzureBlogWebAppDemo.Controllers
                 {
                     getAllBlobsDTO = JsonConvert.DeserializeObject<GetAllBlobsDTO>(Convert.ToString(response.Result));
                 }
+
+                if(getAllBlobsDTO.BlobFullURL.Count < 6)
+                {
+					TempData["error"] = "not enough images to show. Upload "+ (6-getAllBlobsDTO.BlobFullURL.Count) + " more images please";
+					return RedirectToAction(nameof(Index));
+				}
             }
             else
             {

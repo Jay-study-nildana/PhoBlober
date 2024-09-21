@@ -2,12 +2,12 @@
 
 namespace AzureBlogWebAppDemo.DTO
 {
-    public class PhotoUploadDTO
+    public class PhotoUploadMultipleDTO
     {
         public string? PhotoDescription { get; set; }
         public string? PhotoName { get; set; }
         public string? containerName { get; set; }
         [Required]
-        public IFormFile? Image { get; set; }
+        public List<IFormFile>? Image { get; set; }
     }
 }

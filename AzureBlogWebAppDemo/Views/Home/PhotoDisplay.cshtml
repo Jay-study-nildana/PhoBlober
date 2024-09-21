@@ -30,6 +30,48 @@
 	</button>
 </div>
 <hr />
+<div class="album py-5 bg-body-tertiary">
+    <div class="container">
+		<div>
+			@{
+				<p>Showing (max) 6 images. Total images: @Model.BlobFullURL.Count</p>
+			}
+		</div>
+        <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
+            <div class="col">
+                <div class="card shadow-sm">
+                    <img src=@Model.BlobFullURL[0] class="img-fluid d-block w-100" alt="...">
+                </div>
+            </div>
+            <div class="col">
+                <div class="card shadow-sm">
+					<img src=@Model.BlobFullURL[1] class="img-fluid d-block w-100" alt="...">
+                </div>
+            </div>
+            <div class="col">
+                <div class="card shadow-sm">
+                    <img src=@Model.BlobFullURL[2] class="img-fluid d-block w-100" alt="...">
+                </div>
+            </div>
+            <div class="col">
+                <div class="card shadow-sm">
+                    <img src=@Model.BlobFullURL[3] class="img-fluid d-block w-100" alt="...">
+                </div>
+            </div>
+            <div class="col">
+                <div class="card shadow-sm">
+                    <img src=@Model.BlobFullURL[4] class="img-fluid d-block w-100" alt="...">
+                </div>
+            </div>
+            <div class="col">
+                <div class="card shadow-sm">
+                    <img src=@Model.BlobFullURL[5] class="img-fluid d-block w-100" alt="...">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<hr />
 <div style="  margin-left:auto; margin-right:auto">
 	<h3>List of All Images</h3>
 	@{
@@ -46,7 +88,7 @@
 
 	}
 	@{
-		<p>Showing only @maximagesdisplay images. </p>
+		<p>Showing only @maximagesdisplay images. Total images: @Model.BlobFullURL.Count</p>
 	}
 </div>
 

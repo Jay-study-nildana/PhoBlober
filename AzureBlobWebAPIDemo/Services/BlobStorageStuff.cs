@@ -12,7 +12,7 @@ namespace AzureBlobWebAPIDemo.Services
 
 		public string GiveMeDefaultContainerName()
 		{
-            string DefaultContainerName = "containeroneb291fa31-8fe4-4e05-a184-382cc7b4aa18";
+            string DefaultContainerName = "containerabd2b812-c7db-4a61-b8f3-a8181baea1d2";
             return DefaultContainerName;
 		}
 	}
