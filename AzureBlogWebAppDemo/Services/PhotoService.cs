@@ -54,5 +54,16 @@ namespace AzureBlogWebAppDemo.Services
                 ContentType = SD.ContentType.MultipartFormData
             });
         }
+
+        public async Task<ResponseDto?> SendTextForTranslation(TextDTO textDTO)
+        {
+            return await _baseService.SendAsync(new RequestDto()
+            {
+                ApiType = SD.ApiType.POST,
+                Data = textDTO,
+                Url = SD.PhotoAPIBase + "/api/Translator/SendTextForTranslation",
+                //ContentType = SD.ContentType.MultipartFormData
+            });
+        }
     }
 }

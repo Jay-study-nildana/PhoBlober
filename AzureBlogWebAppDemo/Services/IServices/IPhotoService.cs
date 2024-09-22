@@ -10,5 +10,7 @@ namespace AzureBlogWebAppDemo.Services.IServices
         Task<ResponseDto?> UploadForOCRAnalysis(PhotoUploadDTO photoUploadDTO);
         Task<ResponseDto?> GetPhotosAsync(string containerName);
 
+        Task<ResponseDto?> SendTextForTranslation(TextDTO textDTO);
+
     }
 }

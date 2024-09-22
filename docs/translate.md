@@ -1,10 +1,16 @@
-# Photo Analysis
+# Text Translator
 
-Uses the computer vision for photo analysis. Identifies stuff like objects, people, clothing and so on. 
+Uses the translator to go from English to the following three languages
+
+1. Kannada
+1. Hindi
+1. French
+
+note: as of now, I have fixed the translator to work with the above language combinations only. The code can be modified to work with any of the supported languages.
 
 # get the keys
 
-1. https://learn.microsoft.com/en-us/azure/ai-services/computer-vision/quickstarts-sdk/image-analysis-client-library?tabs=windows%2Cvisual-studio&pivots=programming-language-csharp
+1. https://learn.microsoft.com/en-us/azure/ai-services/translator/quickstart-text-rest-api?tabs=csharp
 
 # book a session with me
 

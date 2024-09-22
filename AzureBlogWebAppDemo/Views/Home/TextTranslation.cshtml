@@ -1,0 +1,53 @@
+﻿@using AzureBlogWebAppDemo.DTO
+@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+
+@model TextDTO
+
+<form asp-action="TextTranslation" >
+    <br />
+    <div class="container border p-3">
+        <h1 class="text-center">Translator</h1>
+
+        <hr />
+        <div class="row">
+            <div class="col-2">
+                <label class="control-label pt-2" style="font-size:20px;"> Text To Translate (English Only) </label>
+            </div>
+            <div class="col-10 pb-3">
+                @* <textarea asp-for="OriginalText" class="form-control" required /> *@
+                @Html.TextAreaFor(TextDTO => TextDTO.OriginalText, new { 
+                                                                        @class = "form-control",
+                                                                        @style ="height:500px"
+                                                                        })
+                <span asp-validation-for="OriginalText" class="text-danger"></span>
+            </div>
+            <div class="col-2">
+                <label class="control-label pt-2" style="font-size:20px;">Additiona Info (Optional)</label>
+            </div>
+            <div class="col-10 pb-3">
+                <input asp-for="AdditionalInfo" class="form-control" />
+            </div>
+
+            <div class="col-5 offset-2">
+
+                <a asp-action="Index" class="btn-primary btn form-control ">Back to Home</a>
+            </div>
+            <div class="col-5">
+                <input type="submit" value="Send For Tranlation" class="btn btn-success form-control" />
+            </div>
+
+        </div>
+
+        <div>
+        </div>
+    </div>
+</form>
+
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

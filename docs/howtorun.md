@@ -12,6 +12,9 @@ NOTE: Don't forget to delete your Azure Resources after you are done running the
    1. Computer Vision in the class, ComputerVisionStuff
       1. Update 'VISION_KEY'
       1. Update 'VISION_ENDPOINT'
+   1. Translator in the class, TranslatorStuff
+      1. Update 'key'
+      1. Update 'endpoint'
 1. Run both the projects and do the following Container Actions
    1. Create a Container on Azure Portal or using Swagger UI
    1. Set the Container to public using AzureBlobWebAPIDemo Swagger UI or Azure Portal

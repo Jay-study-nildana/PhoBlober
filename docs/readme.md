@@ -10,6 +10,8 @@ a photo management system that works with
 1. Azure Computer Vision
    1. Analyse Images
    1. Optical Character Recognition
+1. Azure Translator
+   1. Translate from English to Kannada, Hindi and French
 
 NOTE: Don't forget to delete your Azure Resources after you are done running the project.
 
@@ -20,6 +22,7 @@ NOTE: Don't forget to delete your Azure Resources after you are done running the
    1. [Azure Blob Storage](pupload.md)
    1. [Analyse Images](panalyse.md)
    1. [Optical Character Recognition](pocr.md)
+   1. [Text Translator](translate.md)
 
 # book a session with me
 

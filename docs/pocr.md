@@ -6,6 +6,10 @@ Uses the computer vision for OCR analysis. I have tested it with.
 1. Hindi
 1. Kannada (does not detect at the point of writing this)
 
+# get the keys
+
+1. https://learn.microsoft.com/en-us/azure/ai-services/computer-vision/quickstarts-sdk/image-analysis-client-library?tabs=windows%2Cvisual-studio&pivots=programming-language-csharp
+
 # book a session with me
 
 1. [calendly](https://calendly.com/jaycodingtutor/30min)

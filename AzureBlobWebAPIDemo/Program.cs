@@ -10,6 +10,7 @@ builder.Services.AddControllers();
 //builder.Services.AddScoped<IMessageBus, MessageBus>();
 builder.Services.AddScoped<IBlobStorageStuff,BlobStorageStuff>();
 builder.Services.AddScoped<IComputerVisionStuff,ComputerVisionStuff>();
+builder.Services.AddScoped<ITranslatorStuff, TranslatorStuff>();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();

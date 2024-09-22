@@ -6,6 +6,10 @@ Stores images in azure blog storage.
 1. Upload multiple files
 1. displays the images
 
+# get the keys
+
+1. https://learn.microsoft.com/en-us/azure/storage/common/storage-account-keys-manage?tabs=azure-portal
+
 # book a session with me
 
 1. [calendly](https://calendly.com/jaycodingtutor/30min)

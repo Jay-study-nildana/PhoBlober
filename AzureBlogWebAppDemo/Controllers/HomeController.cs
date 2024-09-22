@@ -79,7 +79,6 @@ namespace AzureBlogWebAppDemo.Controllers
             }
             return View(photoAnalysedDTO);
         }
-
         
         public IActionResult PhotoOCRSuccessfull()
         {
@@ -92,6 +91,47 @@ namespace AzureBlogWebAppDemo.Controllers
 
             }
             return View(photoAnalysedDTO);
+        }
+
+        public IActionResult TextTranslationSuccessfull()
+        {
+            TextTranslatedDTO textAnalysedDTO = new TextTranslatedDTO();
+            if (TempData["newuser"] is string s)
+            {
+                var response = JsonConvert.DeserializeObject<ResponseDto>(s);
+                // use newUser object now as needed
+                textAnalysedDTO = JsonConvert.DeserializeObject<TextTranslatedDTO>(Convert.ToString(response.Result));
+
+            }
+            return View(textAnalysedDTO);
+        }
+
+        public IActionResult TextTranslation() 
+        { 
+            return View(); 
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> TextTranslation(TextDTO model)
+        {
+
+            ResponseDto? response = await _photoService.SendTextForTranslation(model);   // .UploadForOCRAnalysis(model);
+
+
+            if (response != null && response.IsSuccess)
+            {
+                TempData["success"] = "Translation done successfully";
+
+                var s = Newtonsoft.Json.JsonConvert.SerializeObject(response);
+                TempData["newuser"] = s;
+                //return RedirectToAction("Index", "Users");
+                return RedirectToAction(nameof(TextTranslationSuccessfull));
+            }
+            else
+            {
+                TempData["error"] = response?.Message;
+            }
+            return View(model);
         }
 
         [HttpPost]
