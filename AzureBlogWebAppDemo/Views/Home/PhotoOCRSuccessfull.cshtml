@@ -1,0 +1,24 @@
+﻿@using AzureBlogWebAppDemo.DTO
+@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+
+@model PhotoOCRedDTO
+
+<h1>@ViewData["Title"]</h1>
+
+<div>
+    <p>Photo OCR Successfull</p>
+
+    <button><a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="PhotoUploadForOCR">OCR another photo</a></button>
+</div>
+<div>
+    <ol>
+    @foreach (var item in Model.foundlines)
+    {
+        <li>@item</li>
+    }
+    </ol>
+</div>

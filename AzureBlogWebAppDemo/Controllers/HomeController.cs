@@ -47,6 +47,16 @@ namespace AzureBlogWebAppDemo.Controllers
             return View();
         }
 
+		public IActionResult PhotoUploadForAnalysis()
+		{
+			return View();
+		}
+
+        public IActionResult PhotoUploadForOCR()
+        {
+            return View();
+        }
+
         public IActionResult PhotoUploadMultiple()
         {
             return View();
@@ -55,6 +65,33 @@ namespace AzureBlogWebAppDemo.Controllers
         public IActionResult PhotoUploadSuccessfull()
         {
             return View();
+        }
+
+        public IActionResult PhotoAnalyseSuccessfull()
+        {
+            PhotoAnalysedDTO photoAnalysedDTO = new PhotoAnalysedDTO();
+            if (TempData["newuser"] is string s)
+            {
+                var response = JsonConvert.DeserializeObject<ResponseDto>(s);
+                // use newUser object now as needed
+                photoAnalysedDTO = JsonConvert.DeserializeObject<PhotoAnalysedDTO>(Convert.ToString(response.Result));
+
+            }
+            return View(photoAnalysedDTO);
+        }
+
+        
+        public IActionResult PhotoOCRSuccessfull()
+        {
+            PhotoOCRedDTO photoAnalysedDTO = new PhotoOCRedDTO();
+            if (TempData["newuser"] is string s)
+            {
+                var response = JsonConvert.DeserializeObject<ResponseDto>(s);
+                // use newUser object now as needed
+                photoAnalysedDTO = JsonConvert.DeserializeObject<PhotoOCRedDTO>(Convert.ToString(response.Result));
+
+            }
+            return View(photoAnalysedDTO);
         }
 
         [HttpPost]
@@ -119,6 +156,56 @@ namespace AzureBlogWebAppDemo.Controllers
             {
                 TempData["success"] = "Photo Uploaded successfully";
                 return RedirectToAction(nameof(PhotoUploadSuccessfull));
+            }
+            else
+            {
+                TempData["error"] = response?.Message;
+            }
+            return View(model);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> PhotoUploadForAnalysis(PhotoUploadDTO model)
+        {
+            if (model.containerName == null)
+                model.containerName = "";
+
+            ResponseDto? response = await _photoService.UploadForPhotoAnalysis(model);
+
+
+            if (response != null && response.IsSuccess)
+            {
+                TempData["success"] = "Photo Analysed successfully";
+
+                var s = Newtonsoft.Json.JsonConvert.SerializeObject(response);
+                TempData["newuser"] = s;
+                //return RedirectToAction("Index", "Users");
+                return RedirectToAction(nameof(PhotoAnalyseSuccessfull));
+            }
+            else
+            {
+                TempData["error"] = response?.Message;
+            }
+            return View(model);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> PhotoUploadForOCR(PhotoUploadDTO model)
+        {
+            if (model.containerName == null)
+                model.containerName = "";
+
+            ResponseDto? response = await _photoService.UploadForOCRAnalysis(model);
+
+
+            if (response != null && response.IsSuccess)
+            {
+                TempData["success"] = "Photo OCR successfully";
+
+                var s = Newtonsoft.Json.JsonConvert.SerializeObject(response);
+                TempData["newuser"] = s;
+                //return RedirectToAction("Index", "Users");
+                return RedirectToAction(nameof(PhotoOCRSuccessfull));
             }
             else
             {

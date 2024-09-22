@@ -32,5 +32,27 @@ namespace AzureBlogWebAppDemo.Services
                 ContentType = SD.ContentType.MultipartFormData
             });
         }
+
+		public async Task<ResponseDto?> UploadForPhotoAnalysis(PhotoUploadDTO photoUploadDTO)
+		{
+			return await _baseService.SendAsync(new RequestDto()
+			{
+				ApiType = SD.ApiType.POST,
+				Data = photoUploadDTO,
+				Url = SD.PhotoAPIBase + "/api/ImageAnalysis/UploadForPhotoAnalysis",
+				ContentType = SD.ContentType.MultipartFormData
+			});
+		}
+
+        public async Task<ResponseDto?> UploadForOCRAnalysis(PhotoUploadDTO photoUploadDTO)
+        {
+            return await _baseService.SendAsync(new RequestDto()
+            {
+                ApiType = SD.ApiType.POST,
+                Data = photoUploadDTO,
+                Url = SD.PhotoAPIBase + "/api/ImageAnalysis/UploadForOCRAnalysis",
+                ContentType = SD.ContentType.MultipartFormData
+            });
+        }
     }
 }

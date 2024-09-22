@@ -19,7 +19,9 @@ namespace AzureBlobWebAPIDemo.Controllers
         protected ResponseDto _response;
         private readonly IBlobStorageStuff _blobStorageStuff;
 
-        public BlobController(IBlobStorageStuff blobStorageStuff)
+        public BlobController(
+            IBlobStorageStuff blobStorageStuff
+            )
         {
             this._response = new ResponseDto();
             this._blobStorageStuff = blobStorageStuff;

@@ -1,25 +1,6 @@
-# PhoBlober
+# Photo Analysis
 
-[<img src="pbimg1.png">]()
-
-a photo management system that works with
-
-1. Azure Blob Storage.
-   1. Upload Images
-   1. Get Images and Display Them
-1. Azure Computer Vision
-   1. Analyse Images
-   1. Optical Character Recognition
-
-NOTE: Don't forget to delete your Azure Resources after you are done running the project.
-
-# more explanations
-
-1. [howtorun.md](howtorun.md)
-1. features
-   1. [Azure Blob Storage](pupload.md)
-   1. [Analyse Images](panalyse.md)
-   1. [Optical Character Recognition](pocr.md)
+Uses the computer vision for photo analysis. Identifies stuff like objects, people, clothing and so on. 
 
 # book a session with me
 

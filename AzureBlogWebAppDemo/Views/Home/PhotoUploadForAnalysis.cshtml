@@ -5,18 +5,12 @@
 @{
 }
 
-@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
-@{
-}
+@model PhotoUploadDTO
 
-@model PhotoUploadDTO 
-
-<form asp-action="PhotoUpload" enctype="multipart/form-data">
+<form asp-action="PhotoUploadForAnalysis" enctype="multipart/form-data">
     <br />
     <div class="container border p-3">
-        <h1 class="text-center">Photo Upload</h1>
+        <h1 class="text-center">Photo Upload For Analysis</h1>
 
         <hr />
         <div class="row">
@@ -38,17 +32,7 @@
                 <label class="control-label pt-2" style="font-size:20px;">container Name (Optional)</label>
             </div>
             <div class="col-10 pb-3">
-@*                 for some reason, the input validation becomes 'required', even though, the DTO 
-                no longer has the 'required'attribute
-                so instead of razor code, I have written HTML directly to stop the automatic
-                required tag from getting loaded. 
-                here, I want to make entering the container optional.  *@
-                @* <textarea asp-for="containerName" class="form-control" rows="5"></textarea> *@
-                @* <input asp-for="containerName" class="form-control" /> *@
-                @* <span asp-validation-for="containerName" class="text-danger"></span> *@
-                @* <input class="form-control" type="text" data-val="true" data-val-required="The containerName field is required." id="containerName" name="containerName" value=""> *@
-
-                <input class="form-control" type="text"  id="containerName" name="containerName" value="">
+                <input class="form-control" type="text" id="containerName" name="containerName" value="">
             </div>
             <div class="col-2">
                 <label class="control-label pt-2" style="font-size:20px;">ImageUrl</label>
