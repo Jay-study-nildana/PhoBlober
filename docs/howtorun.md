@@ -4,24 +4,37 @@ notes on how to run the project locally.
 
 NOTE: Don't forget to delete your Azure Resources after you are done running the project.
 
-1. You have to create a Storage Account on Azure.
-1. You want to turn on 'AllowBlobPublicAccess', for the Storage Account
-   [<img src="allowblobanonymousaccess1.png">]()
-1. AzureBlobWebAPIDemo
-   1. Update 'AccessKeys' for Azure Storage Account in the class, 'BlobStorageStuff'
-   1. Computer Vision in the class, ComputerVisionStuff
-      1. Update 'VISION_KEY'
-      1. Update 'VISION_ENDPOINT'
-   1. Translator in the class, TranslatorStuff
-      1. Update 'key'
-      1. Update 'endpoint'
-1. Run both the projects and do the following Container Actions
-   1. Create a Container on Azure Portal or using Swagger UI
-   1. Set the Container to public using AzureBlobWebAPIDemo Swagger UI or Azure Portal
-   1. Now, stop running the project, and go to the next step.
-   1. Update, 'DefaultContainerName', in the class, 'BlobStorageStuff' (AzureBlobWebAPIDemo project), with the container you just created and made public.
-   1. Update, 'DefaultContainerName', in the class, 'BlobStorageStuff'. The web app will pull images from this container (AzureBlogWebAppDemo project), with the container you just created and made public.
-1. and that's it.
+## app settings file
+
+The following values need to be updated for all features to work, in the PhoBloberWebAPI appsettings.json.
+
+```json
+  "TranslatorSettings": {
+    "Key": "AzureTranslatorKey",
+    "Endpoint": "https://api.cognitive.microsofttranslator.com/"
+  },
+  "CVSettings": {
+    "VISION_KEY": "AzureVisionKey",
+    "VISION_ENDPOINT": "https://computervisionhwsep202024.cognitiveservices.azure.com/"
+  },
+  "StorageSettings": {
+    "AccessKeys": "DefaultEndpointsProtocol=https;AccountName=storageaccountname;AccountKey=accountkey;EndpointSuffix=core.windows.net"
+  }
+```
+
+## Turn on Anonymous Access
+
+You want to turn on 'AllowBlobPublicAccess', for the Storage Account
+
+[<img src="allowblobanonymousaccess1.png">]()
+
+## Container Related Actions
+
+1. Run the project, and create a Container on Azure Portal or using Swagger UI (Recommended)
+   1. Use this name, 'phoblobercontainer1'. This is hard coded to the web app and also the web api.
+   1. TODO, automatically create this container if container is not manually created and set it to public
+   1. TODO, load the default container name from app settings for both web API and web app
+1. Set the Container to public using Azure Portal or using Swagger UI (Recommended)
 
 # book a session with me
 

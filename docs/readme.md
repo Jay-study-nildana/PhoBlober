@@ -8,10 +8,10 @@ a photo management system that works with
    1. Upload Images
    1. Get Images and Display Them
 1. Azure Computer Vision
-   1. Analyse Images
-   1. Optical Character Recognition
-1. Azure Translator
-   1. Translate from English to Kannada, Hindi and French
+   1. Analyse Images (after uploading them to Blog Storage)
+   1. Optical Character Recognition (after uploading them to Blog Storage)
+1. Azure Text Translator
+   1. Translate Text from English to Kannada, Hindi and French
 
 NOTE: Don't forget to delete your Azure Resources after you are done running the project.
 

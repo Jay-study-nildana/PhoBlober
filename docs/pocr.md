@@ -4,6 +4,7 @@ Uses the computer vision for OCR analysis. I have tested it with.
 
 1. English
 1. Hindi
+1. Japanese
 1. Kannada (does not detect at the point of writing this)
 
 # get the keys
