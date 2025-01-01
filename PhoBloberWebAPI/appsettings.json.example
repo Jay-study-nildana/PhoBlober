@@ -1,0 +1,20 @@
+{
+  "Logging": {
+    "LogLevel": {
+      "Default": "Information",
+      "Microsoft.AspNetCore": "Warning"
+    }
+  },
+  "AllowedHosts": "*",
+  "TranslatorSettings": {
+    "Key": "",
+    "Endpoint": "https://api.cognitive.microsofttranslator.com/"
+  },
+  "CVSettings": {
+    "VISION_KEY": "",
+    "VISION_ENDPOINT": "https://computervisionhwsep202024.cognitiveservices.azure.com/"
+  },
+  "StorageSettings": {
+    "AccessKeys": "DefaultEndpointsProtocol=https;AccountName=;AccountKey=;EndpointSuffix=core.windows.net"
+  }
+}

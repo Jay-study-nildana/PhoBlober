@@ -1,0 +1,16 @@
+﻿using PhoBloberWebApp.DTO;
+
+namespace PhoBloberWebApp.Services.IServices
+{
+    public interface IPhotoService
+    {
+        Task<ResponseDto?> UploadPhotoAsync(PhotoUploadDTO photoUploadDTO);
+
+        Task<ResponseDto?> UploadForPhotoAnalysis(PhotoUploadDTO photoUploadDTO);
+        Task<ResponseDto?> UploadForOCRAnalysis(PhotoUploadDTO photoUploadDTO);
+        Task<ResponseDto?> GetPhotosAsync(string containerName);
+
+        Task<ResponseDto?> SendTextForTranslation(TextDTO textDTO);
+
+    }
+}
