@@ -10,6 +10,7 @@ using Newtonsoft.Json;
 using System.Text;
 using static Azure.Core.HttpHeader;
 using PhoBloberWebAPI.Services;
+using PhoBloberWebAPI.Utilities;
 
 namespace PhoBloberWebAPI.Controllers
 {
@@ -21,6 +22,7 @@ namespace PhoBloberWebAPI.Controllers
         protected ResponseDto _response;
         private readonly ITranslatorStuff _translatorStuff1;
         private readonly TranslatorSettingsService _translatorSettingsService;
+        private readonly ControllerUtilities controlUtil;
 
         public TranslatorController(
             ITranslatorStuff translatorStuff,
@@ -30,6 +32,7 @@ namespace PhoBloberWebAPI.Controllers
             this._response = new ResponseDto();
             this._translatorStuff1 = translatorStuff;
             this._translatorSettingsService = translatorSettingsService;
+            controlUtil = new ControllerUtilities();
         }
 
         //// Root myDeserializedClass = JsonConvert.DeserializeObject<List<Root>>(myJsonResponse);
@@ -45,7 +48,7 @@ namespace PhoBloberWebAPI.Controllers
         }
 
         [HttpPost("SendTextForTranslation")]
-        public async Task<ResponseDto> SendTextForTranslation(TextDTO textDTO)
+        public async Task<IActionResult> SendTextForTranslation(TextDTO textDTO)
         {
             int count_of_characters = textDTO.OriginalText.Length;
             int azure_translator_limit = 50000;
@@ -58,9 +61,8 @@ namespace PhoBloberWebAPI.Controllers
                 _response.IsSuccess = false;
                 _response.Message = "text is too long. please use a shorter sentence";
 
-                //here, can I break it up, you know, make a looping request and stitch it up together.
-
-                return _response;
+                //TODO: here, can I break it up, you know, make a looping request and stitch it up together.
+                return StatusCode(404, _response);
             }
 
             try
@@ -110,20 +112,22 @@ namespace PhoBloberWebAPI.Controllers
                     {
                         _response.Message = ex.Message;
                         _response.IsSuccess = false;
-                        return _response;
+                        //return _response;
+                        return StatusCode(500, controlUtil.CreateErrorResponse(ex.Message));
                     }
                 }
 
                 _response.Result = textTranslatedDTO;
                 _response.Message = "Text Translated Successfully";
+                return StatusCode(200, _response);
 
             }
             catch (Exception ex)
             {
                 _response.IsSuccess = false;
                 _response.Message += ex.Message;
+                return StatusCode(500, controlUtil.CreateErrorResponse(ex.Message));
             }
-            return _response;
         }
     }
 }
