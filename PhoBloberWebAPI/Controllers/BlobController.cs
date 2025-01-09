@@ -1,14 +1,11 @@
 ﻿using Azure;
 using Azure.Storage.Blobs;
 using Azure.Storage.Blobs.Models;
-using PhoBloberWebAPI.BlobHelpers;
 using PhoBloberWebAPI.DTO;
 using PhoBloberWebAPI.Services.IServices;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using static Azure.Core.HttpHeader;
 using PhoBloberWebAPI.Services;
+using PhoBloberWebAPI.Utilities;
 
 namespace PhoBloberWebAPI.Controllers
 {
@@ -20,6 +17,8 @@ namespace PhoBloberWebAPI.Controllers
         protected ResponseDto _response;
         private readonly IBlobStorageStuff _blobStorageStuff;
         private readonly StorageSettingsService _storageSettingsService;
+        private readonly ControllerUtilities controlUtil;
+        private readonly BlobUtilities blobutil;
 
         public BlobController(
             IBlobStorageStuff blobStorageStuff,
@@ -29,59 +28,47 @@ namespace PhoBloberWebAPI.Controllers
             this._response = new ResponseDto();
             this._blobStorageStuff = blobStorageStuff;
             this._storageSettingsService = storageSettingsService;
+            controlUtil = new ControllerUtilities();
+            blobutil = new BlobUtilities();
         }
 
         [HttpPost("CreateNewContainer")]
-        public async Task<ResponseDto> CreateNewContainer(string containerName)
+        public async Task<IActionResult> CreateNewContainer(string containerName)
         {
+            if (string.IsNullOrWhiteSpace(containerName))
+            {
+                return StatusCode(400, controlUtil.CreateErrorResponse("Container name cannot be null or empty."));
+            }
+
             try
             {
-                var storageaccesskeys = _blobStorageStuff.GiveMeAccessKeys(_storageSettingsService);
+                // create the container and get the DTO
+                var containerDTO = await blobutil.CreateBlobContainerAsync(containerName,_blobStorageStuff,_storageSettingsService);
 
-                string? storageConnectionString = storageaccesskeys;
-
-                // Create a client that can authenticate with a connection string
-                BlobServiceClient blobServiceClient = new BlobServiceClient(storageConnectionString);
-
-                //Create a unique name for the container
-                //TODO : turn this back on when you implement automatic container creation for both web api and web app
-                //containerName += Guid.NewGuid().ToString();
-
-                // Create the container and return a container client object
-                BlobContainerClient containerClient = await blobServiceClient.CreateBlobContainerAsync(containerName);
-
-                var containerDTO = new ContainerCreatedDTO();
-                containerDTO.ContainerName = containerName;
-                containerDTO.DateTimeOfCreation = DateTime.UtcNow.ToString();
-                containerDTO.ContainerPrimaryUri = containerClient.Uri;
-                containerDTO.StorageAccountName = containerClient.AccountName;
-
-                _response.Result = containerDTO;
-                _response.Message = "A container named '" + containerName + "' has been created. ";
+                return StatusCode(200, controlUtil.CreateSuccessResponse(containerDTO, $"A container named '{containerName}' has been created."));
             }
             catch (Azure.RequestFailedException ex)
             {
-                _response.IsSuccess = false;
-                _response.Message += ex.Message;
-
-                if(ex.ErrorCode== "InvalidResourceName")
-                {
-                    var ContainerNameRulesDTO = new ContainerNameRulesDTO();
-                    _response.Result = ContainerNameRulesDTO;
-                }
+                return StatusCode(400, (ex.ErrorCode == "InvalidResourceName"
+                    ? controlUtil.CreateErrorResponse(ex.Message, new ContainerNameRulesDTO())
+                    : controlUtil.CreateErrorResponse(ex.Message)));
             }
             catch (Exception ex)
             {
-                _response.IsSuccess = false;
-                _response.Message += ex.Message;
+
+                if(controlUtil.ContainsRetryFailed(ex.Message))
+                {
+                    return StatusCode(503, controlUtil.CreateErrorResponse(ex.Message));
+                }
+
+                return StatusCode(500, controlUtil.CreateErrorResponse(ex.Message));
             }
-            return _response;
         }
 
         //get all containers
         [HttpGet]
         [Route("GetAllContainers")]
-        public async Task<ResponseDto> Get()
+        public async Task<IActionResult> Get()
         {
             try
             {
@@ -90,55 +77,41 @@ namespace PhoBloberWebAPI.Controllers
 
                 // Create a client that can authenticate with a connection string
                 BlobServiceClient blobServiceClient = new BlobServiceClient(storageConnectionString);
-                // Get the blob helper, to get all containers
-                BlobHelperContainer blobHelperContainer = new BlobHelperContainer();
 
-                GetAllContainersDTO getAllContainersDTO = blobHelperContainer.GetAllContainers(blobServiceClient);
+                GetAllContainersDTO getAllContainersDTO = blobutil.GetAllContainers(blobServiceClient);
                 if (getAllContainersDTO.ContainerIds.Count == 0)
                 {
                     _response.Message = "Looks like there are no containers in the current account.";
+                    return StatusCode(404, _response);
                 }
                 else
                 {
                     _response.Result = getAllContainersDTO;
                     _response.Message = "Total of " + getAllContainersDTO.ContainerCount + " Containers Loaded";
+                    return StatusCode(200, _response);
                 }
             }
             catch (Exception ex)
             {
                 _response.IsSuccess = false;
                 _response.Message = ex.Message;
-            }
-            return _response;
+                return StatusCode(500, controlUtil.CreateErrorResponse(ex.Message));
+            }            
         }
 
 		[HttpPost("SetContainerPublic")]
-		public async Task<ResponseDto> SetContainerPublic(string containerName)
+		public async Task<IActionResult> SetContainerPublic(string containerName)
 		{
 			try
 			{
-				var storageaccesskeys = _blobStorageStuff.GiveMeAccessKeys(_storageSettingsService);
 
-				string? storageConnectionString = storageaccesskeys;
-
-				// Create a client that can authenticate with a connection string
-				BlobServiceClient blobServiceClient = new BlobServiceClient(storageConnectionString);
-
-                // Create the container and return a container client object
-                //BlobContainerClient containerClient = await blobServiceClient.CreateBlobContainerAsync(containerName);
-                BlobContainerClient containerClient = blobServiceClient.GetBlobContainerClient(containerName);
-
-                var response = containerClient.SetAccessPolicy(PublicAccessType.BlobContainer);
-
-				var containerDTO = new ContainerCreatedDTO();
-				containerDTO.ContainerName = containerName;
-				containerDTO.DateTimeOfCreation = DateTime.UtcNow.ToString();
-				containerDTO.ContainerPrimaryUri = containerClient.Uri;
-				containerDTO.StorageAccountName = containerClient.AccountName;
+                 var containerDTO = blobutil.ToggleContainerPublic(containerName,_blobStorageStuff,_storageSettingsService);
 
 				_response.Result = containerDTO;
 				_response.Message = "container" + containerName + " anonymous public access is turned on. ";
-			}
+
+                return StatusCode(200, _response);
+            }
 			catch (Azure.RequestFailedException ex)
 			{
 				_response.IsSuccess = false;
@@ -149,17 +122,18 @@ namespace PhoBloberWebAPI.Controllers
 					var ContainerNameRulesDTO = new ContainerNameRulesDTO();
 					_response.Result = ContainerNameRulesDTO;
 				}
-			}
+                return StatusCode(404, _response);
+            }
 			catch (Exception ex)
 			{
 				_response.IsSuccess = false;
 				_response.Message += ex.Message;
-			}
-			return _response;
+                return StatusCode(500, controlUtil.CreateErrorResponse(ex.Message));
+            }
 		}
 
 		[HttpPost("UploadPhoto")]
-        public async Task<ResponseDto> UploadPhoto(PhotoUploadDTO photoUpload)
+        public async Task<IActionResult> UploadPhoto(PhotoUploadDTO photoUpload)
         {
             try
             {
@@ -184,8 +158,9 @@ namespace PhoBloberWebAPI.Controllers
                 {
 					_response.IsSuccess = false;
 					_response.Message += "Container has no public access. Unable to Upload Image";
-					return _response;
-				}
+					//return _response;
+                    return StatusCode(401, _response);
+                }
 
 				//rename the file.
 				//1. I should not use the name as provided by the user
@@ -197,16 +172,6 @@ namespace PhoBloberWebAPI.Controllers
 				//uploadFileName += photoUpload.Image?.FileName;
 				uploadFileName =uploadFileName+getExtensionOfUploadedImage;
 				BlobClient blobClient = containerClient.GetBlobClient(uploadFileName);
-
-                //this also works.
-                //copying to stream and then pushing the stream to the cloud
-
-                //using (var stream = System.IO.File.Create(uploadFileName))
-                //{
-                //    await photoUpload.Image.CopyToAsync(stream);
-                //    stream.Position = 0;
-                //    var info2 = await blobClient.UploadAsync(stream);
-                //}
 
                 //this also works. preferred, simply way. directly using Azure SDK.
                 var info = await blobClient.UploadAsync(photoUpload.Image?.OpenReadStream());
@@ -221,25 +186,27 @@ namespace PhoBloberWebAPI.Controllers
 
                 _response.Result = photoUploadedDTO;
                 _response.Message = "Photo Uploaded Successfully";
+                return StatusCode(200, _response);
 
             }
             catch (Azure.RequestFailedException ex)
             {
                 _response.IsSuccess = false;
                 _response.Message += ex.Message;
+                return StatusCode(400, _response);
             }
             catch (Exception ex)
             {
                 _response.IsSuccess = false;
                 _response.Message += ex.Message;
+                return StatusCode(500, controlUtil.CreateErrorResponse(ex.Message));
             }
-            return _response;
         }
 
         //get all blobs aka images
         [HttpGet]
         [Route("GetAllBlobs")]
-        public async Task<ResponseDto> GetGetAllBlobs(string containerName)
+        public async Task<IActionResult> GetGetAllBlobs(string containerName)
         {
             try
             {
@@ -279,19 +246,21 @@ namespace PhoBloberWebAPI.Controllers
                 if (getAllBlobsDTO.BlobFullURL.Count == 0)
                 {
                     _response.Message = "Looks like there are no containers in the current account.";
+                    return StatusCode(404, _response);
                 }
                 else
                 {
                     _response.Result = getAllBlobsDTO;
                     _response.Message = "Total of " + getAllBlobsDTO.blobCount + " Images Loaded";
+                    return StatusCode(200, _response);
                 }
             }
             catch (Exception ex)
             {
                 _response.IsSuccess = false;
                 _response.Message = ex.Message;
+                return StatusCode(500, controlUtil.CreateErrorResponse(ex.Message));
             }
-            return _response;
         }
 
 
