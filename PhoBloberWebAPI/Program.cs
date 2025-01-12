@@ -5,9 +5,16 @@ using PhoBloberWebAPI.Settings;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
+using Microsoft.EntityFrameworkCore;
+using PhoBloberWebAPI.DB;
+using Serilog;
 
 
 var builder = WebApplication.CreateBuilder(args);
+
+// Setup logging
+builder.Logging.ClearProviders();
+builder.Logging.AddConsole();
 
 // Add services to the container.
 
@@ -35,6 +42,20 @@ builder.Services.AddTransient<StorageSettingsService>();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+// Register DbContext with SQLite
+builder.Services.AddDbContext<LoggerDBContext>(options =>
+    options.UseSqlite("Data Source=logger.db"));
+
+// Configure Serilog
+var SerilogSettings = builder.Configuration.GetSection("SerilogSettings");
+var SQLiteConnectionString = SerilogSettings["SQLiteConnectionString"]; 
+Log.Logger = new LoggerConfiguration()
+    .WriteTo.SQLite("Logs.db") // Specify the SQLite database file
+    .CreateLogger();
+
+builder.Logging.ClearProviders();
+builder.Logging.AddSerilog();
 
 var app = builder.Build();
 

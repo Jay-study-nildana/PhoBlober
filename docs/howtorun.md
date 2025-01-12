@@ -9,17 +9,29 @@ NOTE: Don't forget to delete your Azure Resources after you are done running the
 The following values need to be updated for all features to work, in the PhoBloberWebAPI appsettings.json.
 
 ```json
+{
+  "Logging": {
+    "LogLevel": {
+      "Default": "Information",
+      "Microsoft.AspNetCore": "Warning"
+    }
+  },
+  "AllowedHosts": "*",
   "TranslatorSettings": {
-    "Key": "AzureTranslatorKey",
+    "Key": "00000000",
     "Endpoint": "https://api.cognitive.microsofttranslator.com/"
   },
   "CVSettings": {
-    "VISION_KEY": "AzureVisionKey",
+    "VISION_KEY": "000000",
     "VISION_ENDPOINT": "https://computervisionhwsep202024.cognitiveservices.azure.com/"
   },
   "StorageSettings": {
-    "AccessKeys": "DefaultEndpointsProtocol=https;AccountName=storageaccountname;AccountKey=accountkey;EndpointSuffix=core.windows.net"
+    "AccessKeys": "DefaultEndpointsProtocol=https;AccountName=storageaccount;AccountKey=00000;EndpointSuffix=core.windows.net"
+  },
+  "SerilogSettings": {
+    "SQLiteConnectionString": "Logs.db"
   }
+}
 ```
 
 ## Turn on Anonymous Access

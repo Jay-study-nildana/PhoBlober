@@ -6,6 +6,7 @@ using PhoBloberWebAPI.Services.IServices;
 using Microsoft.AspNetCore.Mvc;
 using PhoBloberWebAPI.Services;
 using PhoBloberWebAPI.Utilities;
+using PhoBloberWebAPI.DB;
 
 namespace PhoBloberWebAPI.Controllers
 {
@@ -19,10 +20,14 @@ namespace PhoBloberWebAPI.Controllers
         private readonly StorageSettingsService _storageSettingsService;
         private readonly ControllerUtilities controlUtil;
         private readonly BlobUtilities blobutil;
+        private readonly LoggerDBContext _dbContext;
+        private readonly ILogger<BlobController> _logger;
 
         public BlobController(
             IBlobStorageStuff blobStorageStuff,
-            StorageSettingsService storageSettingsService
+            StorageSettingsService storageSettingsService,
+            LoggerDBContext dbContext,
+            ILogger<BlobController> logger
             )
         {
             this._response = new ResponseDto();
@@ -30,25 +35,43 @@ namespace PhoBloberWebAPI.Controllers
             this._storageSettingsService = storageSettingsService;
             controlUtil = new ControllerUtilities();
             blobutil = new BlobUtilities();
+            _dbContext = dbContext;
+            _logger = logger;
         }
 
         [HttpPost("CreateNewContainer")]
         public async Task<IActionResult> CreateNewContainer(string containerName)
         {
-            if (string.IsNullOrWhiteSpace(containerName))
+            List<LogItem> logItems = new List<LogItem>();
+
+            logItems.Add(new LogItem() { Level = LogLevel.Information, Message = "Reached CreateNewContainer" + " with containername " + containerName, Timestamp = DateTime.UtcNow });
+
+            if (string.IsNullOrWhiteSpace(containerName) || containerName.Length < 3)
             {
-                return StatusCode(400, controlUtil.CreateErrorResponse("Container name cannot be null or empty."));
+                var errorMessage = "Container name cannot be null or empty or less than 3 characters.";
+                logItems.Add(new LogItem() { Level = LogLevel.Information, Message = errorMessage , Timestamp = DateTime.UtcNow });
+                _dbContext.LogItems.AddRange(logItems); 
+                _dbContext.SaveChanges();
+                return StatusCode(400, controlUtil.CreateErrorResponse(errorMessage));
             }
 
             try
             {
                 // create the container and get the DTO
                 var containerDTO = await blobutil.CreateBlobContainerAsync(containerName,_blobStorageStuff,_storageSettingsService);
+                var successMessage = $"A container named '{containerName}' has been created.";
 
-                return StatusCode(200, controlUtil.CreateSuccessResponse(containerDTO, $"A container named '{containerName}' has been created."));
+                logItems.Add(new LogItem() { Level = LogLevel.Information, Message = successMessage, Timestamp = DateTime.UtcNow });
+                _dbContext.LogItems.AddRange(logItems);
+                _dbContext.SaveChanges();
+                _logger.LogInformation(successMessage);
+                return StatusCode(200, controlUtil.CreateSuccessResponse(containerDTO, successMessage));
             }
             catch (Azure.RequestFailedException ex)
             {
+                logItems.Add(new LogItem() { Level = LogLevel.Information, Message = "RequestFailedException", Timestamp = DateTime.UtcNow });
+                _dbContext.LogItems.AddRange(logItems);
+                _dbContext.SaveChanges();
                 return StatusCode(400, (ex.ErrorCode == "InvalidResourceName"
                     ? controlUtil.CreateErrorResponse(ex.Message, new ContainerNameRulesDTO())
                     : controlUtil.CreateErrorResponse(ex.Message)));
@@ -58,6 +81,9 @@ namespace PhoBloberWebAPI.Controllers
 
                 if(controlUtil.ContainsRetryFailed(ex.Message))
                 {
+                    logItems.Add(new LogItem() { Level = LogLevel.Information, Message = "RequestFailedException", Timestamp = DateTime.UtcNow });
+                    _dbContext.LogItems.AddRange(logItems);
+                    _dbContext.SaveChanges();
                     return StatusCode(503, controlUtil.CreateErrorResponse(ex.Message));
                 }
 
@@ -70,6 +96,9 @@ namespace PhoBloberWebAPI.Controllers
         [Route("GetAllContainers")]
         public async Task<IActionResult> Get()
         {
+            List<LogItem> logItems = new List<LogItem>();
+
+            logItems.Add(new LogItem() { Level = LogLevel.Information, Message = "Reached GetAllContainers", Timestamp = DateTime.UtcNow });
             try
             {
                 var storageaccesskeys = _blobStorageStuff.GiveMeAccessKeys(_storageSettingsService);
@@ -81,18 +110,31 @@ namespace PhoBloberWebAPI.Controllers
                 GetAllContainersDTO getAllContainersDTO = blobutil.GetAllContainers(blobServiceClient);
                 if (getAllContainersDTO.ContainerIds.Count == 0)
                 {
-                    _response.Message = "Looks like there are no containers in the current account.";
+                    var errorMessage = "Looks like there are no containers in the current account.";
+                    logItems.Add(new LogItem() { Level = LogLevel.Information, Message = errorMessage, Timestamp = DateTime.UtcNow });
+                    _dbContext.LogItems.AddRange(logItems);
+                    _dbContext.SaveChanges();
+                    _response.Message = errorMessage;
                     return StatusCode(404, _response);
                 }
                 else
                 {
+                    var successMessage = "Total of " + getAllContainersDTO.ContainerCount + " Containers Loaded";
+                    logItems.Add(new LogItem() { Level = LogLevel.Information, Message = successMessage, Timestamp = DateTime.UtcNow });
+                    _dbContext.LogItems.AddRange(logItems);
+                    _dbContext.SaveChanges();
                     _response.Result = getAllContainersDTO;
-                    _response.Message = "Total of " + getAllContainersDTO.ContainerCount + " Containers Loaded";
+                    _response.Message = successMessage;
+                    _logger.LogInformation(successMessage);
                     return StatusCode(200, _response);
                 }
             }
             catch (Exception ex)
             {
+                var errorMessage = ex.Message;
+                logItems.Add(new LogItem() { Level = LogLevel.Information, Message = errorMessage, Timestamp = DateTime.UtcNow });
+                _dbContext.LogItems.AddRange(logItems);
+                _dbContext.SaveChanges();
                 _response.IsSuccess = false;
                 _response.Message = ex.Message;
                 return StatusCode(500, controlUtil.CreateErrorResponse(ex.Message));
@@ -108,8 +150,9 @@ namespace PhoBloberWebAPI.Controllers
                  var containerDTO = blobutil.ToggleContainerPublic(containerName,_blobStorageStuff,_storageSettingsService);
 
 				_response.Result = containerDTO;
-				_response.Message = "container" + containerName + " anonymous public access is turned on. ";
-
+                var responseMessage = "container" + containerName + " anonymous public access is turned on. ";
+                _response.Message = responseMessage;
+                _logger.LogInformation(responseMessage);
                 return StatusCode(200, _response);
             }
 			catch (Azure.RequestFailedException ex)
@@ -185,7 +228,9 @@ namespace PhoBloberWebAPI.Controllers
                 photoUploadedDTO.PhotoDescription = photoUpload.PhotoDescription;
 
                 _response.Result = photoUploadedDTO;
-                _response.Message = "Photo Uploaded Successfully";
+                var responseMessage = "Photo Uploaded Successfully";
+                _response.Message = responseMessage;
+                _logger.LogInformation(responseMessage);
                 return StatusCode(200, _response);
 
             }
@@ -250,8 +295,11 @@ namespace PhoBloberWebAPI.Controllers
                 }
                 else
                 {
+
                     _response.Result = getAllBlobsDTO;
-                    _response.Message = "Total of " + getAllBlobsDTO.blobCount + " Images Loaded";
+                    var responseMessage = "Total of " + getAllBlobsDTO.blobCount + " Images Loaded";
+                    _response.Message = responseMessage;
+                    _logger.LogInformation(responseMessage);
                     return StatusCode(200, _response);
                 }
             }

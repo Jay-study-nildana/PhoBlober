@@ -23,6 +23,13 @@ NOTE: Don't forget to delete your Azure Resources after you are done running the
    1. [Analyse Images](panalyse.md)
    1. [Optical Character Recognition](pocr.md)
    1. [Text Translator](translate.md)
+1. Logging
+   1. [logging with sqlite](loggingwithsqlite.md)
+   1. [logging with serilog](loggingwithserilog.md)
+1. Testing and Code Coverage  
+   1. [xUnit Tests](xunit.md)
+   1. [Coverlet Code Coverage](coverlet.md)
+
 
 # book a session with me
 
