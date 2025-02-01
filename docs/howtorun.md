@@ -40,6 +40,8 @@ You want to turn on 'AllowBlobPublicAccess', for the Storage Account
 
 [<img src="allowblobanonymousaccess1.png">]()
 
+Note: Check out this [microsoft learn](https://learn.microsoft.com/en-us/training/modules/describe-azure-storage-services/5-exercise-create-storage-blob) link, which is more detailed.
+
 ## Container Related Actions
 
 1. Run the project, and create a Container on Azure Portal or using Swagger UI (Recommended)
